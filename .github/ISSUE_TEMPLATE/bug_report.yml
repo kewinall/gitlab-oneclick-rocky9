@@ -1,0 +1,53 @@
+name: Bug report
+description: 回報安裝、Runner、備份或離線 Bundle 問題
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        請先移除密碼、Token、Private Key、內部網域及其他機敏資訊。
+  - type: input
+    id: version
+    attributes:
+      label: 專案版本
+      placeholder: 1.4.0
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: 安裝模式
+      options:
+        - online
+        - offline
+        - resume/repair
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: 作業系統
+      placeholder: Rocky Linux 9.8 x86_64
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: 執行指令
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 預期結果
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 實際結果與已去識別化 Log
+      render: shell
+    validations:
+      required: true

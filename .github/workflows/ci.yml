@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-yaml zip
+
+      - name: Run tests
+        run: bash tests/run-tests.sh
+
+      - name: Build release archives
+        run: bash scripts/package-release.sh
+
+      - name: Verify release checksums
+        run: |
+          cd dist
+          sha256sum -c gitlab-oneclick-rocky9-v$(cat ../VERSION).SHA256SUMS

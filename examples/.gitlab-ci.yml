@@ -1,0 +1,11 @@
+stages:
+  - test
+
+runner-smoke-test:
+  stage: test
+  image: alpine:3.23
+  script:
+    - echo "GitLab Runner is working"
+    - uname -a
+    - cat /etc/os-release
+    - date

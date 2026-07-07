@@ -1,0 +1,9 @@
+[Unit]
+Description=GitLab Docker stack backup
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+Environment=STACK_DIR=/srv/gitlab-stack
+ExecStart=/srv/gitlab-stack/scripts/backup.sh

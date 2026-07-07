@@ -1,0 +1,13 @@
+.env
+secrets/
+backups/
+dist/
+*.log
+*.bak
+*.tmp
+gitlab-offline-bundle-*/
+*.tar
+*.tar.gz
+*.zip
+*.SHA256SUMS
+__pycache__/
