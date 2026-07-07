@@ -81,9 +81,9 @@ exit 0
 MOCK
 chmod 0755 "$TMP/bin"/*
 
-GITLAB_INSTALLER_TEST_MODE=1 \
-SYSTEMD_UNIT_DIR="$TMP/systemd" \
-PATH="$TMP/bin:$PATH" \
+if ! GITLAB_INSTALLER_TEST_MODE=1 \
+  SYSTEMD_UNIT_DIR="$TMP/systemd" \
+  PATH="$TMP/bin:$PATH" \
   bash "$ROOT/install.sh" \
     --mode online \
     --host gitlab.test \
@@ -91,6 +91,11 @@ PATH="$TMP/bin:$PATH" \
     --ssh-port 12222 \
     --stack-dir "$TMP/stack" \
     --skip-firewall > "$TMP/install.log" 2>&1
+then
+  echo "Mock install failed:" >&2
+  cat "$TMP/install.log" >&2
+  exit 1
+fi
 
 grep -q 'GitLab deployment completed.' "$TMP/install.log"
 grep -q 'MockRootPassword' "$TMP/stack/secrets/initial_admin.txt"
@@ -102,11 +107,16 @@ grep -q '^GITLAB_HTTP_PORT=18081$' "$TMP/stack/.env"
 # Regression: resume.sh must recreate initial_admin.txt without expanding an
 # unset positional parameter from the nested password extraction command.
 rm -f "$TMP/stack/secrets/initial_admin.txt"
-GITLAB_INSTALLER_TEST_MODE=1 \
-SYSTEMD_UNIT_DIR="$TMP/systemd" \
-PATH="$TMP/bin:$PATH" \
+if ! GITLAB_INSTALLER_TEST_MODE=1 \
+  SYSTEMD_UNIT_DIR="$TMP/systemd" \
+  PATH="$TMP/bin:$PATH" \
   bash "$ROOT/resume.sh" \
     --stack-dir "$TMP/stack" > "$TMP/resume.log" 2>&1
+then
+  echo "Mock resume failed:" >&2
+  cat "$TMP/resume.log" >&2
+  exit 1
+fi
 grep -q 'Deployment resumed successfully.' "$TMP/resume.log"
 grep -q 'MockRootPassword' "$TMP/stack/secrets/initial_admin.txt"
 

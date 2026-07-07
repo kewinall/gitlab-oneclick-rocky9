@@ -2,7 +2,10 @@
 set -Eeuo pipefail
 
 STACK_DIR="${STACK_DIR:-/srv/gitlab-stack}"
-[[ $EUID -eq 0 ]] || { echo "Run as root or with sudo." >&2; exit 1; }
+if [[ "${GITLAB_INSTALLER_TEST_MODE:-0}" != "1" && $EUID -ne 0 ]]; then
+  echo "Run as root or with sudo." >&2
+  exit 1
+fi
 
 # shellcheck disable=SC1091
 source "$STACK_DIR/scripts/lib-gitlab.sh"

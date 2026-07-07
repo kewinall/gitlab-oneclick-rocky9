@@ -40,7 +40,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-[[ $EUID -eq 0 ]] || die "Run as root or with sudo."
+[[ $EUID -eq 0 || "${GITLAB_INSTALLER_TEST_MODE:-}" == "1" ]] || die "Run as root or with sudo."
 [[ -n "$OUTPUT_DIR" ]] || die "--output cannot be empty."
 [[ "$(uname -m)" == "$TARGET_ARCH" ]] || die "Run on an x86_64 preparation host. Detected: $(uname -m)"
 command -v dnf >/dev/null 2>&1 || die "dnf is required on the preparation host."

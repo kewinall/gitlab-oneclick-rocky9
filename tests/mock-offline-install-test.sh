@@ -101,18 +101,23 @@ exit 0
 MOCK
 chmod 0755 "$TMP/bin"/*
 
-GITLAB_INSTALLER_TEST_MODE=1 \
-SYSTEMD_UNIT_DIR="$TMP/systemd" \
-DNF_CALL_LOG="$TMP/dnf.calls" \
-DOCKER_CALL_LOG="$TMP/docker.calls" \
-OS_RELEASE_FILE="$TMP/os-release" \
-PATH="$TMP/bin:$PATH" \
+if ! GITLAB_INSTALLER_TEST_MODE=1 \
+  SYSTEMD_UNIT_DIR="$TMP/systemd" \
+  DNF_CALL_LOG="$TMP/dnf.calls" \
+  DOCKER_CALL_LOG="$TMP/docker.calls" \
+  OS_RELEASE_FILE="$TMP/os-release" \
+  PATH="$TMP/bin:$PATH" \
   bash "$TMP/bundle/install-offline.sh" \
     --host gitlab.test \
     --http-port 18082 \
     --ssh-port 12223 \
     --stack-dir "$TMP/stack" \
     --skip-firewall > "$TMP/install.log" 2>&1
+then
+  echo "Mock offline install failed:" >&2
+  cat "$TMP/install.log" >&2
+  exit 1
+fi
 
 grep -q 'GitLab deployment completed.' "$TMP/install.log"
 grep -q '^INSTALL_MODE=offline$' "$TMP/stack/.env"

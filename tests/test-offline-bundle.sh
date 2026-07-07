@@ -79,13 +79,19 @@ MOCK
 chmod 0755 "$TMP/bin"/*
 
 OUT="$TMP/offline-bundle"
-DNF_CALL_LOG="$TMP/dnf.calls" \
-SKOPEO_CALL_LOG="$TMP/skopeo.calls" \
-OS_RELEASE_FILE="$TMP/os-release" \
-PATH="$TMP/bin:$PATH" \
+if ! GITLAB_INSTALLER_TEST_MODE=1 \
+  DNF_CALL_LOG="$TMP/dnf.calls" \
+  SKOPEO_CALL_LOG="$TMP/skopeo.calls" \
+  OS_RELEASE_FILE="$TMP/os-release" \
+  PATH="$TMP/bin:$PATH" \
   bash "$ROOT/prepare-offline-bundle.sh" \
     --output "$OUT" \
     --extra-image python:3.13-slim > "$TMP/prepare.log" 2>&1
+then
+  echo "Offline bundle preparation mock failed:" >&2
+  cat "$TMP/prepare.log" >&2
+  exit 1
+fi
 
 test -f "$OUT/bundle.env"
 test -f "$OUT/install-offline.sh"
