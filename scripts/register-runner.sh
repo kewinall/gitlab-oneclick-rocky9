@@ -3,7 +3,10 @@ set -Eeuo pipefail
 
 STACK_DIR="${STACK_DIR:-/srv/gitlab-stack}"
 TOKEN="${1:-}"
-[[ $EUID -eq 0 ]] || { echo "Run as root or with sudo." >&2; exit 1; }
+if [[ "${GITLAB_INSTALLER_TEST_MODE:-0}" != "1" && $EUID -ne 0 ]]; then
+  echo "Run as root or with sudo." >&2
+  exit 1
+fi
 [[ -n "$TOKEN" ]] || { echo "Usage: sudo $0 glrt-xxxxxxxxxxxxxxxx" >&2; exit 1; }
 [[ "$TOKEN" == glrt-* ]] || echo "Warning: token does not use the glrt- prefix." >&2
 

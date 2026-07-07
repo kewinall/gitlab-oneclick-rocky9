@@ -99,6 +99,7 @@ printf '%s\n' "$*" >> "$DOCKER_CALL_LOG"
 exit 0
 MOCK
 chmod 0755 "$REG_TMP/bin/docker"
+GITLAB_INSTALLER_TEST_MODE=1 \
 DOCKER_CALL_LOG="$REG_TMP/docker.calls" \
 STACK_DIR="$REG_TMP/stack" \
 PATH="$REG_TMP/bin:$PATH" \
@@ -112,7 +113,7 @@ fi
 grep -q 'Runner registration completed and verified successfully.' "$REG_TMP/output.log"
 
 printf '[TEST] Runner TOML duplicate-key normalization\n'
-"$ROOT/tests/test-runner-normalize.sh"
+bash "$ROOT/tests/test-runner-normalize.sh"
 
 printf '[TEST] Registration script invokes the normalizer and has no append-based shm_size patch\n'
 grep -q 'normalize-runner-config.sh' "$ROOT/scripts/register-runner.sh"
@@ -123,7 +124,7 @@ fi
 
 printf '[TEST] Explicit online/offline mode validation
 '
-"$ROOT/tests/test-install-mode.sh"
+bash "$ROOT/tests/test-install-mode.sh"
 
 printf '[TEST] GitHub workflow YAML parse
 '
@@ -144,15 +145,15 @@ grep -q 'prepare-offline-bundle.sh' "$ROOT/README.md"
 
 printf '[TEST] Mocked end-to-end installer and resume flow
 '
-"$ROOT/tests/mock-install-test.sh"
+bash "$ROOT/tests/mock-install-test.sh"
 
 
 printf '[TEST] Offline bundle preparation and verification
 '
-"$ROOT/tests/test-offline-bundle.sh"
+bash "$ROOT/tests/test-offline-bundle.sh"
 
 printf '[TEST] Mocked offline installation flow
 '
-"$ROOT/tests/mock-offline-install-test.sh"
+bash "$ROOT/tests/mock-offline-install-test.sh"
 
 printf '[PASS] All static and behavioral tests passed.\n'
