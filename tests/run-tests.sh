@@ -99,10 +99,6 @@ printf '%s\n' "$*" >> "$DOCKER_CALL_LOG"
 exit 0
 MOCK
 chmod 0755 "$REG_TMP/bin/docker"
-GITLAB_INSTALLER_TEST_MODE=1 \
-DOCKER_CALL_LOG="$REG_TMP/docker.calls" \
-STACK_DIR="$REG_TMP/stack" \
-PATH="$REG_TMP/bin:$PATH" \
 if ! GITLAB_INSTALLER_TEST_MODE=1 \
   DOCKER_CALL_LOG="$REG_TMP/docker.calls" \
   STACK_DIR="$REG_TMP/stack" \
