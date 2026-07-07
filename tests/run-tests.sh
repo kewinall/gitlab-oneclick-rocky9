@@ -103,7 +103,17 @@ GITLAB_INSTALLER_TEST_MODE=1 \
 DOCKER_CALL_LOG="$REG_TMP/docker.calls" \
 STACK_DIR="$REG_TMP/stack" \
 PATH="$REG_TMP/bin:$PATH" \
-bash "$ROOT/scripts/register-runner.sh" glrt-test-token > "$REG_TMP/output.log" 2>&1
+if ! GITLAB_INSTALLER_TEST_MODE=1 \
+  DOCKER_CALL_LOG="$REG_TMP/docker.calls" \
+  STACK_DIR="$REG_TMP/stack" \
+  PATH="$REG_TMP/bin:$PATH" \
+  bash "$ROOT/scripts/register-runner.sh" glrt-test-token \
+    > "$REG_TMP/output.log" 2>&1
+then
+  echo "Runner registration mock test failed:" >&2
+  cat "$REG_TMP/output.log" >&2
+  exit 1
+fi
 grep -q 'compose exec -T gitlab-runner gitlab-runner register' "$REG_TMP/docker.calls"
 grep -q 'compose exec -T gitlab-runner gitlab-runner verify' "$REG_TMP/docker.calls"
 if grep -q 'compose restart gitlab-runner' "$REG_TMP/docker.calls"; then

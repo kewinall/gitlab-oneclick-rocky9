@@ -34,7 +34,9 @@ check_interval = 3
     network_mtu = 0
 TOML
 
-STACK_DIR="$TMP/stack" bash "$ROOT/scripts/normalize-runner-config.sh" >/dev/null
+GITLAB_INSTALLER_TEST_MODE=1 \
+STACK_DIR="$TMP/stack" \
+  bash "$ROOT/scripts/normalize-runner-config.sh" >/dev/null
 
 python3 - "$TMP/stack/runner/config/config.toml" <<'PY'
 import sys
@@ -57,7 +59,9 @@ assert docker["pull_policy"] == "if-not-present"
 PY
 
 # Running the normalizer a second time must remain valid and idempotent.
-STACK_DIR="$TMP/stack" bash "$ROOT/scripts/normalize-runner-config.sh" >/dev/null
+GITLAB_INSTALLER_TEST_MODE=1 \
+STACK_DIR="$TMP/stack" \
+  bash "$ROOT/scripts/normalize-runner-config.sh" >/dev/null
 python3 - "$TMP/stack/runner/config/config.toml" <<'PY'
 import sys
 import tomllib

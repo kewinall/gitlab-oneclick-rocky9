@@ -4,7 +4,10 @@ set -Eeuo pipefail
 STACK_DIR="${STACK_DIR:-/srv/gitlab-stack}"
 CONFIG="${CONFIG:-$STACK_DIR/runner/config/config.toml}"
 
-[[ $EUID -eq 0 ]] || { echo "Run as root or with sudo." >&2; exit 1; }
+if [[ "${GITLAB_INSTALLER_TEST_MODE:-0}" != "1" && $EUID -ne 0 ]]; then
+  echo "Run as root or with sudo." >&2
+  exit 1
+fi
 [[ -f "$STACK_DIR/.env" ]] || { echo "$STACK_DIR/.env was not found." >&2; exit 1; }
 [[ -f "$CONFIG" ]] || { echo "$CONFIG was not found." >&2; exit 1; }
 
